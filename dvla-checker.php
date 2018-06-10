@@ -199,6 +199,23 @@ add_shortcode('dvla_input', 'dvlacheck_input');
 
 function dvlacheck_form_handler()
 {
+    $mappings = [
+      'tax status' => 'taxStatus',
+      'MOT status' => 'MOTStatus',
+      'vehicle make' => 'vehicleMake',
+      'first registration' => 'firstRegistration',
+      'fuel type' => 'fuelType',
+      'year of manufacture' => 'manufactureYear',
+      'cylinder capacity' => 'cylinderCapacity',
+      'emissions' => 'C02Emissions',
+      'export marker' => 'exportMarker',
+      'vehicle status' => 'vehicleStatus',
+      'colour' => 'vehicleColour',
+      'type approval' => 'typeApproval',
+      'wheelplan' => 'wheelplan',
+      'revenue weight' => 'revenueWeight'
+    ];
+  
     if(!isset($_POST['reg_number'])) return;
 
     $regNumber = $_POST['reg_number'];
@@ -226,65 +243,16 @@ function dvlacheck_form_handler()
 
     foreach($scriptResults as $scriptResult)
     {
-        switch (true)
+      $itemStatus = explode(":", $scriptResult)[1];
+
+      foreach ($mapping as $substring => $key)
+      {
+        if (stristr($scriptResult, $substring))
         {
-            case stristr($scriptResult, 'tax status'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['taxStatus'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'MOT status'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['MOTStatus'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'vehicle make'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['manufacturer'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'first registration'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['firstRegistration'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'fuel type'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['fuelType'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'year of manufacture'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['manufactureYear'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'cylinder capacity'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['cylinderCapacity'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'emissions'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['C02Emissions'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'export marker'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['exportMarker'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'vehicle status'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['vehicleStatus'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'colour'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['vehicleColour'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'type approval'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['typeApproval'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'wheelplan'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['wheelplan'] = $itemStatus;
-            break;
-            case stristr($scriptResult, 'revenue weight'):
-                $itemStatus = explode(':', $scriptResult)[1];
-                $carDetails['revenueWeight'] = $itemStatus;
+            $carDetails[$key] = $itemStatus;
             break;
         }
+      }
     }
 
     $postOptions = [
